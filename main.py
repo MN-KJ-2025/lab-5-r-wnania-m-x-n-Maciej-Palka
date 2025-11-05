@@ -50,11 +50,12 @@ def square_from_rectan(
             - Wektor b_new (n,).
         Jeżeli dane wejściowe są niepoprawne funkcja zwraca `None`.
     """
-    if not (isinstance(A, np.ndarray) or isinstance(b, np.ndarray)):
+    if not isinstance(A, np.ndarray) or not isinstance(b, np.ndarray):
         return None
-    if len(np.shape(A)) != 2:
+    if A.ndim != 2 or b.ndim != 1:
         return None
-    if np.shape(A)[0] != np.shape(A)[1] or np.shape(A)[0] != np.shape(b):
+    m, _ = A.shape
+    if b.shape[0] != m:
         return None
     A_new  = A.T @ A
     b_new = A.T @ b
@@ -74,10 +75,13 @@ def residual_norm(A: np.ndarray, x: np.ndarray, b: np.ndarray) -> float | None:
         (float): Wartość normy residuum dla podanych parametrów.
         Jeżeli dane wejściowe są niepoprawne funkcja zwraca `None`.
     """
-    # Poprawić warunki
-    if not (isinstance(A, np.ndarray) or isinstance(b, np.ndarray) or isinstance(x, np.ndarray)):
+    if not (isinstance(A, np.ndarray) and isinstance(b, np.ndarray) and isinstance(x, np.ndarray)):
         return None
-    if np.shape(A)[1] != np.shape(x)[0]:
+    if A.ndim != 2 or x.ndim !=1 or b.ndim != 1:
+        return None
+    
+    m, n = A.shape
+    if x.shape[0] != n or b.shape[0] != m:
         return None
     
     return np.linalg.norm(b - (A @ x))
